@@ -127,12 +127,27 @@
 </html>
 
 <?php
-	if(isset($_POST['issue_book']))
-	{
-		$connection = mysqli_connect("localhost","root","");
-		$db = mysqli_select_db($connection,"lms");
-		$query = "insert into issued_books values(null,$_POST[book_no],'$_POST[book_name]','$_POST[book_author]',$_POST[student_id],1,'$_POST[issue_date]')";
-		$query_run = mysqli_query($connection,$query);
-		
-	}
+if (isset($_POST['issue_book'])) {
+    $connection = mysqli_connect("localhost", "root", "");
+    $db = mysqli_select_db($connection, "lms");
+    
+    if ($connection && $db) {
+        $book_no = mysqli_real_escape_string($connection, $_POST['book_no']);
+        $book_name = mysqli_real_escape_string($connection, $_POST['book_name']);
+        $book_author = mysqli_real_escape_string($connection, $_POST['book_author']);
+        $student_id = mysqli_real_escape_string($connection, $_POST['student_id']);
+        $issue_date = mysqli_real_escape_string($connection, $_POST['issue_date']);
+        
+        $query = "INSERT INTO issued_books (book_no, book_name, book_author, student_id, status, issue_date) VALUES ('$book_no', '$book_name', '$book_author', '$student_id', 1, '$issue_date')";
+        $query_run = mysqli_query($connection, $query);
+        
+        if ($query_run) {
+            echo "<script> alertMsg(); </script>";
+        } else {
+            echo "Error: " . mysqli_error($connection);
+        }
+    } else {
+        echo "Database connection failed.";
+    }
+}
 ?>
